@@ -2,8 +2,14 @@
 
 class Heap(object):
     '''
-    a heap implementation with customizable comparison function. 
-    defaults to min heap
+    A heap implementation with customizable comparison function.
+
+    The major benefit of this (aside from easily allowing a switch between
+    min heap and max heap) is the ability to stuff complex objects into the
+    heap with a suitable lambda for comparing them (properties, dict lookups,
+    position in some other list, etc).
+
+    defaults to min heap of simple comparison of the keys
     '''
     def __init__(self, compare = lambda x, y: x > y):
         self.cmp = compare
