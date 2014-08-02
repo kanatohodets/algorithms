@@ -5,7 +5,7 @@ class Heap(object):
     a heap implementation with customizable comparison function. 
     defaults to min heap
     '''
-    def __init__(self, root, compare = lambda x, y: x < y):
+    def __init__(self, root, compare = lambda x, y: x > y):
         self.cmp = compare
         self.tree = [root]
 
