@@ -5,9 +5,9 @@ class Heap(object):
     a heap implementation with customizable comparison function. 
     defaults to min heap
     '''
-    def __init__(self, root, compare = lambda x, y: x > y):
+    def __init__(self, compare = lambda x, y: x > y):
         self.cmp = compare
-        self.tree = [root]
+        self.tree = []
 
     def _heapify_up(self, i):
         if i > 0:
@@ -36,6 +36,9 @@ class Heap(object):
 
 
     def delete(self, index):
+        if len(self.tree) == 0:
+            return False
+
         self.tree[index] = self.tree.pop()
         self._heapify_down(index)
 
@@ -44,11 +47,17 @@ class Heap(object):
         self._heapify_up(len(self.tree) - 1)
 
     def get(self):
+        if len(self.tree) == 0:
+            return False
+
         old_root = self.tree[0]
         self.delete(0)
         return old_root
 
     def find(self):
+        if len(self.tree) == 0:
+            return False
+
         return self.tree[0]
 
 
@@ -73,7 +82,8 @@ def verify(heap):
  
 
 def main():
-    h = Heap(11)
+    h = Heap()
+    h.insert(11)
     h.insert(3)
     h.insert(5)
     h.insert(8)
