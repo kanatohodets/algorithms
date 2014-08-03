@@ -29,10 +29,15 @@ class Heap(object):
         if two_i > n:
             return
         elif two_i < n:
-            left, right = two_i, two_i + 1 
+            left, right = two_i, two_i + 1
             # use the compare func to determine which index (left/right) has the
             # more extreme value in the tree
-            j = sorted([left, right], cmp=lambda x, y: self.cmp(self.tree[x], self.tree[y])).pop()
+            rightMoreExtreme = self.cmp(self.tree[left], self.tree[right])
+            if rightMoreExtreme:
+                j = right
+            else:
+                j = left
+
         elif two_i == n:
             j = two_i
 
@@ -43,7 +48,10 @@ class Heap(object):
 
     def delete(self, index):
         if len(self.tree) == 0:
-            return False
+            return {}
+
+        if len(self.tree) == 1:
+            return self.tree.pop()
 
         self.tree[index] = self.tree.pop()
         self._heapify_down(index)
@@ -60,12 +68,24 @@ class Heap(object):
         self.delete(0)
         return old_root
 
-    def find(self):
+    def peek(self):
         if len(self.tree) == 0:
             return False
 
-        return self.tree[0]
+    def to_list(self):
+        tree = self.tree[:]
+        ret = []
 
+        done = False
+        while not done:
+            top = self.get()
+            if top:
+                ret.append(top)
+            else:
+                done = True
+
+        self.tree = tree
+        return ret
 
 def verify(heap):
     for i in xrange(len(heap.tree)):
@@ -75,34 +95,31 @@ def verify(heap):
         if child + 1 >= len(heap.tree):
             continue
         a, b = heap.tree[child], heap.tree[child + 1]
-        if heap.cmp(compare, a): 
-            print "index i: ", i, " has a too extreme child, a: ", child, "value: ", a
-            print heap.tree
+        if heap.cmp(compare, a):
+            print ""
+            print "NOT OK- i:", i
+            print "bad child, a:", child, "value: ", a
+            print "tree: ", str(heap.tree)
+            print
             return False
         if heap.cmp(compare, b):
-            print "index i: ", i, " has a too extreme child, b: ", child, "value: ", b
-            print heap.tree
+            print ""
+            print "NOT OK- i:", i
+            print "bad child b:", child + 1, "value: ", b
+            print "tree: ", str(heap.tree)
+            print
             return False
 
     return str(heap.tree) + " is ok"
- 
+
 
 def main():
-    h = Heap()
-    h.insert(11)
-    h.insert(3)
-    h.insert(5)
-    h.insert(8)
-    h.insert(4)
-    print "t", h.tree
-    print "inserting 15", 
-    h.insert(15)
-    print verify(h)
-    print "pre-get tree",  verify(h)
-    print "getting root: ", h.get()
-    print "post get tree", verify(h)
-    h.delete(2)
-    print "post delete 2", verify(h)
-    
+    h = Heap(lambda x, y: x > y)
+    members = [43, 2, 38, 12, 31]
+    for key in members:
+        h.insert(key)
+
+    print h.to_list()
+
 if __name__ == '__main__':
     main()
