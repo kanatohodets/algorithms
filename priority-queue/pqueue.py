@@ -19,6 +19,8 @@ class pqueue(object):
 
 
 if __name__ == '__main__':
+    # the nested def is intentional: 
+    # make_example_member shouldn't be exposed for others to import
     def make_example_member():
         ret = {
             'pri': random.randint(0, 100),
