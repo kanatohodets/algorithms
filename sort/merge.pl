@@ -15,9 +15,8 @@ sub not_builtin_sort {
 
     # if the first thing is a coderef, assume it's for comparing
     # sorting an array of coderefs is left to 'sort'.
-    my $cmp;
-    $cmp = $_[0] if ref $_[0] eq 'CODE';
-    $cmp //= sub { shift() <= shift() };
+    # maybe a tad dense, just playing around.
+    my $cmp = ref $_[0] eq 'CODE' ? shift : sub { shift() <= shift() };
 
     my @list = @_;
 
