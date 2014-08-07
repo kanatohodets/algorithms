@@ -51,17 +51,15 @@ class Trie(object):
 
 if __name__ == '__main__':
     t = Trie()
-    #t.insert("bob has three plates")
-    #t.insert("bob has three pineapples")
-    t.insert("jane can run fast")
-    t.insert("jane can run a business")
-    t.insert("j")
-    t.insert("joe")
-    t.insert("job")
-    t.insert("jo")
-    #print "bob", t.search("bob")
-    print "jane", t.search("jane")
-    print "j", t.search("j")
-    print "jo", t.search("jo")
-    #print "joe", t.search("joe")
-    print "joerb", t.search("joerb")
+    print "loading words"
+    with open('/usr/share/dict/words', 'r') as words:
+        for line in words:
+            t.insert(line.strip())
+
+    print "finished"
+    try:
+        while True:
+            search = raw_input("enter a search term: \n")
+            print t.search(search)
+    except KeyboardInterrupt:
+        print "exiting"
