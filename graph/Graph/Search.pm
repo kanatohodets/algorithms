@@ -1,14 +1,17 @@
-#!/usr/bin/env perl
-
+package Graph::Search;
 use strict;
 use warnings;
 use 5.20.0;
 use experimental qw(postderef signatures);
+
+use Exporter qw(import);
+our @EXPORT_OK = qw(node dfs bfs);
 ## no critic ProhibitSubroutinePrototypes
 
-sub node ($id, $data) {
+my $id_counter = 0;
+sub node ($data) {
     return {
-        id => $id,
+        id => $id_counter++,
         word => $data,
         outgoing => []
     };
@@ -18,7 +21,9 @@ sub node ($id, $data) {
 sub dfs ($node, $discovered) {
     push $discovered->@*, $node;
     foreach my $neighbor ($node->{outgoing}->@*) {
-        dfs($neighbor, $discovered) if !grep { 
+        # a hash based set would be more efficient than grep,
+        # but the results wouldn't be ordered.
+        dfs($neighbor, $discovered) if !grep {
             $_->{id} == $neighbor->{id}
         } $discovered->@*;
     }
@@ -44,28 +49,4 @@ sub bfs ($root, $is_interesting) {
     return @interesting;
 }
 
-my $root = node 0, 'foo';
-my $one = node 1, 'bar';
-my $two = node 2, 'baz';
-my $three = node 3, 'quux';
-
-push $root->{outgoing}->@*, $one;
-push $root->{outgoing}->@*, $two;
-push $one->{outgoing}->@*, $three;
-
-push $three->{outgoing}->@*, $two;
-
-my $foo = [];
-dfs $root, $foo;
-say "dfs";
-say "----";
-say $_->{id} for $foo->@*;
-
-# just get the search order
-my @search = bfs $root, sub {
-    1;
-};
-say '';
-say "bfs";
-say "----";
-say $_->{id} for @search;
+1;
