@@ -2,13 +2,14 @@
 use 5.20.0;
 use strict;
 use warnings;
-use experimental 'postderef';
-use experimental 'lexical_subs';
+use experimental qw(postderef lexical_subs signatures);
+
+## no critic ProhibitSubroutinePrototypes
 
 # it'd be nice to use a &@ prototype to get the
 # pretty block syntax, but that prevents optionally leaving out
 # the comparator function
-sub not_builtin_sort {
+sub not_builtin_sort ($cmp, @list) {
     # lexical to close over the $cmp comparator function
     my sub merge_sort;
     my sub merge;
@@ -16,15 +17,13 @@ sub not_builtin_sort {
     # if the first thing is a coderef, assume it's for comparing
     # sorting an array of coderefs is left to 'sort'.
     # maybe a tad dense, just playing around.
-    my $cmp = ref $_[0] eq 'CODE' ? shift : sub { shift() <= shift() };
-
-    my @list = @_;
+    $cmp = sub ($a, $b) { $a <= $b } if ref $cmp ne 'CODE';
 
     return merge_sort(@list);
 
-    sub merge {
-        my @left = shift->@*;
-        my @right = shift->@*;
+    sub merge ($left, $right) {
+        my @left = $left->@*;
+        my @right = $right->@*;
 
         my @result;
         my $left_len = scalar @left;
@@ -48,8 +47,7 @@ sub not_builtin_sort {
         @result;
     }
 
-    sub merge_sort {
-        my @list = @_;
+    sub merge_sort (@list) {
         my $len = scalar @list;
         return @list if $len <= 1;
 
@@ -68,5 +66,5 @@ sub not_builtin_sort {
 
 my @data = (4, 2, 1, 3);
 say not_builtin_sort @data;
-say not_builtin_sort sub { shift() >= shift() }, @data;
-say not_builtin_sort sub { shift() ge shift() }, ('a' .. 'z');
+say not_builtin_sort sub ($a, $b) { $a >= $b }, @data;
+say not_builtin_sort sub ($a, $b) { $a ge $b }, ('a' .. 'z');
