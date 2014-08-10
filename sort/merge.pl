@@ -51,11 +51,10 @@ sub not_builtin_sort ($cmp, @list) {
         my $len = scalar @list;
         return @list if $len <= 1;
 
-        my (@left, @right);
         my $middle = int $len / 2;
 
-        push @left, $_ for @list[0 .. $middle - 1];
-        push @right, $_ for @list[$middle .. $len - 1];
+        my @left = @list[0 .. $middle - 1];
+        my @right = @list[$middle .. $len - 1];
 
         @left = merge_sort(@left);
         @right = merge_sort(@right);
