@@ -3,8 +3,7 @@
 use strict;
 use warnings;
 use 5.20.0;
-use experimental 'postderef';
-use experimental 'signatures';
+use experimental qw(postderef signatures);
 use Data::Dump qw(dump);
 use List::Util qw(shuffle);
 
