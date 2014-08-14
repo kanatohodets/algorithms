@@ -10,12 +10,14 @@ use Data::Dump qw(dump);
 
 # fisher-yates, via Durstenfeld, via wikipedia
 sub shuffle ($data, $start, $end) {
+    my @shuffled = $data->@*;
     for (my $i = $end - 1; $i >= $start; $i--) {
         my $j = int rand ($end - $start) + $start;
-        $data->@[$j, $i] = $data->@[$i, $j];
+        @shuffled[$j, $i] = @shuffled[$i, $j];
     }
+    return @shuffled;
 }
 
 my @data = 0 .. 10;
-shuffle \@data, 5, scalar @data;
-say dump @data;
+my @shuffled = shuffle \@data, 5, scalar @data;
+say dump @shuffled;
