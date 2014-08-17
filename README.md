@@ -1,1 +1,1 @@
-Some algorithm implementations as I work through *Algorithm Design*.
+Toy algorithm and data structure implementations. Some from *Algorithm Design*, others just because.
