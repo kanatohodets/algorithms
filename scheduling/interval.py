@@ -1,6 +1,22 @@
 #!/usr/bin/env python
 import random
 
+def overlap(point, request):
+    if point >= request['start'] and point <= request['end']:
+        return True
+    return False
+
+def depth(requests):
+    maxDepth = 1
+    for request in requests:
+        s = request['start']
+        e = request['end']
+        overlap_start = [r for r in requests if overlap(s, r)]
+        overlap_end = [r for r in requests if overlap(e, r)]
+        local_max_depth = max(len(overlap_start), len(overlap_end))
+        maxDepth = max(local_max_depth, maxDepth)
+    return maxDepth
+
 def schedule_limited_resources(requests):
     '''
     greedy algorithm to schedule requests based on 'nearest end time'
@@ -8,6 +24,8 @@ def schedule_limited_resources(requests):
     result = []
     # stick smallest end date on the end of the list for .pop()-ing
     requests.sort(key = lambda x: x['end'], reverse=True)
+    # make a copy so as not to destroy original
+    requests = requests[:]
     comparisons = 0
     while (len(requests) > 0):
         winner = requests.pop()
@@ -24,7 +42,7 @@ def schedule_limited_resources(requests):
 def main():
     def create_random_requests(num = 300, time_unit_max = 8):
         requests = []
-        for i in xrange(num - 1):
+        for i in xrange(num):
             start = random.randint(0, time_unit_max)
             # can't start in the final time unit: every interval must be at
             # least len 1
@@ -36,14 +54,18 @@ def main():
             requests.append({'start': start, 'end': end})
         return requests
 
-    def create_linear_requests(num = 300, time_unit_max = 8):
+    def create_linear_requests(num = 30, time_unit_max = 8):
         requests = []
         for i in xrange(0, num - 1, 2):
             requests.append({'start': i, 'end': i+1})
         return requests
 
 
-    print schedule_limited_resources(create_random_requests())
+    rand_requests = create_random_requests(num = 5)
+    print schedule_limited_resources(rand_requests)
+    #print sorted(rand_requests, key = lambda x: x['start'])
+    print depth(rand_requests)
+
 
 if __name__ == '__main__':
     main()
