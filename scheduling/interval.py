@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import random
 
-def schedule(requests):
+def schedule_limited_resources(requests):
     '''
     greedy algorithm to schedule requests based on 'nearest end time'
     '''
@@ -43,7 +43,7 @@ def main():
         return requests
 
 
-    print schedule(create_random_requests())
+    print schedule_limited_resources(create_random_requests())
 
 if __name__ == '__main__':
     main()
