@@ -19,19 +19,18 @@ def depth(requests):
 
 def schedule_unlimited_resources(requests):
     d = depth(requests)
-    labels = range(1, d + 1)
     requests.sort(key = lambda x: x['start'])
-    for i in xrange(len(requests) - 1):
-        print requests
+    for i in xrange(len(requests)):
         start = requests[i]['start']
         end = requests[i]['end']
-        in_consideration = range(0, d)
-        for request in requests[:i - 1]:
+        in_consideration = [True for x in xrange(d)]
+
+        for request in requests[0:i]:
             if overlap(start, request) or overlap(end, request):
                 if 'label' in request:
-                    del in_consideration[request['label']]
-        if len(in_consideration) > 0:
-            requests[i]['label'] = in_consideration[0]
+                    in_consideration[request['label']] = False
+
+        requests[i]['label'] = in_consideration.index(True)
     return requests
 
 
@@ -55,7 +54,6 @@ def schedule_limited_resources(requests):
                 requests.pop(i)
 
     return result, comparisons
-        
 
 def main():
     def create_random_requests(num = 300, time_unit_max = 8):
@@ -78,12 +76,26 @@ def main():
             requests.append({'start': i, 'end': i+1})
         return requests
 
+    def has_conflict(requests):
+        for base in requests:
+            start = base['start']
+            end = base['end']
+            label = base['label']
+            for compare in requests:
+                if compare == base:
+                    continue
+                if overlap(start, compare) or overlap(end, compare):
+                    if compare['label'] == label:
+                        return True
+        return False
 
     rand_requests = create_random_requests(num = 5)
     #print schedule_limited_resources(rand_requests)
-    print sorted(rand_requests, key = lambda x: x['start'])
     #print depth(rand_requests)
-    print schedule_unlimited_resources(rand_requests)
+    scheduled = schedule_unlimited_resources(rand_requests)
+    print scheduled
+    print "which has a depth of", depth(rand_requests), "and uses", len(set([x['label'] for x in scheduled])), "resources"
+    print "does it have any conflicts?", has_conflict(scheduled)
 
 
 if __name__ == '__main__':
