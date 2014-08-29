@@ -17,6 +17,24 @@ def depth(requests):
         maxDepth = max(local_max_depth, maxDepth)
     return maxDepth
 
+def schedule_unlimited_resources(requests):
+    d = depth(requests)
+    labels = range(1, d + 1)
+    requests.sort(key = lambda x: x['start'])
+    for i in xrange(len(requests) - 1):
+        print requests
+        start = requests[i]['start']
+        end = requests[i]['end']
+        in_consideration = range(0, d)
+        for request in requests[:i - 1]:
+            if overlap(start, request) or overlap(end, request):
+                if 'label' in request:
+                    del in_consideration[request['label']]
+        if len(in_consideration) > 0:
+            requests[i]['label'] = in_consideration[0]
+    return requests
+
+
 def schedule_limited_resources(requests):
     '''
     greedy algorithm to schedule requests based on 'nearest end time'
@@ -62,9 +80,10 @@ def main():
 
 
     rand_requests = create_random_requests(num = 5)
-    print schedule_limited_resources(rand_requests)
-    #print sorted(rand_requests, key = lambda x: x['start'])
-    print depth(rand_requests)
+    #print schedule_limited_resources(rand_requests)
+    print sorted(rand_requests, key = lambda x: x['start'])
+    #print depth(rand_requests)
+    print schedule_unlimited_resources(rand_requests)
 
 
 if __name__ == '__main__':
